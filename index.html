@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #fff;
+				margin: 0;
+				overflow: hidden;
+			}
+			input{
+			    position: absolute;
+			    bottom: 0;
+			    width: 100%;
+			    padding: 10px;
+			    font-size: 28px;
+    			border: 1px solid #bbb;
+			}
+			.info{
+				  position:absolute;
+				  margin:10px;
+				  font-size:14px;
+				  color: white;
+			}
+		</style>
+		<title>Chicken Egg!</title>
+	
+	</head>
+	<body>
+		<div class="info">
+			<h2>Animal Planet with sockets!</h2>Tap on the ground to move
+			<br />Type message and ENTER to post.
+			<br />Be nice to each other!
+			<br />
+			<br />Chickens online:
+			<span id="chickencount"></span>
+		</div>
+		<input class="chat" placeholder="Type your message here..." type="text" />
+		
+		<script type="x-shader/x-vertex" id="vertexShader">
+
+			varying vec3 vWorldPosition;
+
+			void main() {
+
+				vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+				vWorldPosition = worldPosition.xyz;
+
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+			}
+
+		</script>
+		<script type="x-shader/x-fragment" id="fragmentShader">
+
+			uniform vec3 topColor;
+			uniform vec3 bottomColor;
+			uniform float offset;
+			uniform float exponent;
+
+			varying vec3 vWorldPosition;
+
+			void main() {
+
+				float h = normalize( vWorldPosition + offset ).y;
+				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+
+			}
+
+		</script>
+		<script type="text/javascript" src="node_modules/three/three.min.js"></script>
+		<script type="text/javascript" src="lib/helvetiker_regular.typeface.js"></script>
+		<script type="text/javascript" src="//cdn.socket.io/socket.io-1.2.0.js"></script>
+		<script type="text/javascript" src="dist/compiled.js"></script>
+	</body>
+
+</html>
