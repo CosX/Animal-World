@@ -9,8 +9,9 @@
 				background-color: #fff;
 				margin: 0;
 				overflow: hidden;
+				color: white;
 			}
-			input{
+			.chat{
 			    position: absolute;
 			    bottom: 10px;
 			    left: 10px;
@@ -24,7 +25,6 @@
 				position: absolute;
 				padding: 10px;
 				font-size: 16px;
-				color: white;
 				width: 300px;
 				height: 100%;
 				background: rgba(0, 0, 0, 0.45);	  
@@ -62,11 +62,47 @@
 			.toggle-away:hover{
 				cursor: pointer;
 			}
+			.modal-container{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: 100;
+				background: #8e44ad;
+			}
+			.modal{
+				left: 50%;
+				position: fixed;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				background: #9b59b6;
+			    padding: 20px;
+    			width: 25%;
+				font-size: 1.3em;
+			}
+			.modal input{
+				padding: 10px;
+				width: 100%;
+			    box-sizing: border-box;
+			}
+			
 		</style>
 		<title>Chicken Egg!</title>
 	
 	</head>
 	<body>
+		<div class="modal-container">
+			<div class="modal">
+				<h2>Animal planet in 3D, WITH SOCKETS!</h2>
+				<form id="AnimalForm">
+					<p>
+						<label for="name">Your name</label><br>
+						<input type="text" id="name" placeholder="Enter name here..." />
+					</p>
+					<input type="submit" value="Enter world" />
+				</form>
+			</div>
+		</div>
+		
 		<div class="info">
 			<div class="toggle-away">Toggle chat</div>
 			<div>

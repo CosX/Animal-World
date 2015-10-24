@@ -1,12 +1,12 @@
 /* global io */
 /* global THREE */
-let Chicken = require("./chicken").Chicken;
+let Cow = require("./cow").Cow;
 let World = require("./world").World;
 let LoadModels = require("./loadmodels").LoadModels;
 let ChatHandler = require("./chatHandler").ChatHandler;
 
 export class Playground{
-	constructor(){
+	constructor(name){
 		let self = this;
 		
 		this.socket = null;
@@ -33,10 +33,10 @@ export class Playground{
 		this.setskydome();
 		this.setrenderer();
 		
-		this.controls = new THREE.TrackballControls( this.camera, document );
+		this.controls = new THREE.TrackballControls( this.camera, this.renderer.domElement );
 		this.controls.target.copy( this.camera.target );
 		this.controls.noPan = true;
-		this.controls.rotateSpeed = 4.0;
+		this.controls.rotateSpeed = 8.0;
 		this.controls.minDistance = 20;
 		this.controls.maxDistance = 400;
 		
@@ -44,6 +44,8 @@ export class Playground{
 		this.textboxIsActive = false;
 		this.chat = new ChatHandler();
 		
+		this.clientClickX = 0;
+    	this.clientClickY = 0;
 		
 		this.textbox.addEventListener("focus", function(){
 			self.textboxIsActive = true;
@@ -54,27 +56,26 @@ export class Playground{
 		}, true);
 		
 		this.renderer.domElement.addEventListener("mouseup", function(event){ self.onMouseUp(event) }, false);
-		this.renderer.domElement.addEventListener("mousedown", function(){ self.onMouseDown() }, false);
-		window.addEventListener("mousemove", function(){ self.onMouseMove() }, false);
+		this.renderer.domElement.addEventListener("mousedown", function(event){ self.onMouseDown(event) }, false);
 		window.addEventListener("resize", function(){ self.onWindowResize() }, false );
 		window.addEventListener("keydown", function(event){ self.onKeyDown(event) }, false);
 		
 		this.reference = new LoadModels();
 		this.reference.load().then(function(){
 			self.socket = io.connect("http://localhost:3000/");
-			self.initialize();
+			self.initialize(name);
 		});
 		
 	}
 	
-	initialize(){
+	initialize(name){
 		let self = this;
 		
 		this.world = new World(this.reference, 500);
 		this.world.loadToScene(this.scene);
 		
 		this.socket.on("giveid", (id)=>{
-			self.animal = new Chicken(id, new THREE.Vector3(37.049533439151695, 504.9169002010969, 152.38907703563717), "Dave", 4, self.reference, self.scene);
+			self.animal = new Cow(id, new THREE.Vector3(37.049533439151695, 504.9169002010969, 152.38907703563717), name, 4, self.reference, self.scene);
 			self.draw();
 			self.animal.updateMovement(self.world.mesh);
 			console.log(self.animal.body.position);
@@ -88,7 +89,7 @@ export class Playground{
 		});
 		self.socket.on("allplayers", (data) => {
 			data.forEach((animal) => {
-				let c = new Chicken(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
+				let c = new Cow(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
 				c.updateMovement(self.world.mesh);
 				self.animals.push(c);
 			});
@@ -96,7 +97,7 @@ export class Playground{
 		});
 		
 		self.socket.on("newplayer", (animal) => {
-			let ani = new Chicken(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
+			let ani = new Cow(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
 			ani.updateMovement(self.world.mesh);
 			self.animals.push(ani);
 			document.querySelector("#chickencount").textContent = self.animals.length + 1;
@@ -125,20 +126,22 @@ export class Playground{
 		});
 		
 	}
-	onMouseDown(){
-		this.isdragging = false;
+	onMouseDown(event){
+		this.clientClickX = event.clientX;
+    	this.clientClickY = event.clientY;
 	}
-	onMouseMove(){
-		this.isdragging = true;
-	}
+	
 	onMouseUp(event){
 		let self = this;
-		if(self.isdragging){return;}
+		if (event.target !== self.renderer.domElement) { return; }
+	 	let x = event.clientX;
+        let y = event.clientY;
+        if( x != self.clientClickX || y != self.clientClickY ){return; }
 		
 		event.preventDefault();
 		var mouse = {	
-			x: ( event.clientX / window.innerWidth ) * 2 - 1,
-			y: - ( event.clientY / window.innerHeight ) * 2 + 1
+			x: ( x / window.innerWidth ) * 2 - 1,
+			y: - ( y / window.innerHeight ) * 2 + 1
 		}
 		this.raycaster.setFromCamera( mouse, this.camera );
 

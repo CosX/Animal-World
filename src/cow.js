@@ -1,5 +1,5 @@
 /* global THREE */
-export class Chicken{
+export class Cow{
 	constructor(id, startposition, name, scale, reference, scene){
 		this.id = id;
 		this.scale = scale;
@@ -23,7 +23,7 @@ export class Chicken{
 		};
 		var textShapes = THREE.FontUtils.generateShapes( this.name, this.options );
 		var text = new THREE.ShapeGeometry( textShapes );
-		this.textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: "#333333", side: THREE.DoubleSide } ) );
+		this.textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: "#000000", side: THREE.DoubleSide } ) );
 		this.textMesh.position.z = -5;
 		this.textMesh.position.y = 3;
 		this.body.add( this.textMesh );
