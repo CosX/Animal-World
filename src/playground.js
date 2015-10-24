@@ -93,14 +93,14 @@ export class Playground{
 				c.updateMovement(self.world.mesh);
 				self.animals.push(c);
 			});
-			document.querySelector("#chickencount").textContent = self.animals.length + 1;
+			document.querySelector("#animalcount").textContent = self.animals.length + 1;
 		});
 		
 		self.socket.on("newplayer", (animal) => {
 			let ani = new Cow(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
 			ani.updateMovement(self.world.mesh);
 			self.animals.push(ani);
-			document.querySelector("#chickencount").textContent = self.animals.length + 1;
+			document.querySelector("#animalcount").textContent = self.animals.length + 1;
 			
 		});
 		
@@ -112,7 +112,7 @@ export class Playground{
 			        break;
 			    }
 			}
-			document.querySelector("#chickencount").textContent = self.animals.length + 1;
+			document.querySelector("#animalcount").textContent = self.animals.length + 1;
 		});
 		
 		self.socket.on("message", (animal) => {

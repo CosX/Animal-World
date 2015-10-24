@@ -82,7 +82,19 @@
 			.modal input{
 				padding: 10px;
 				width: 100%;
+				border: 0;
 			    box-sizing: border-box;
+			}
+			
+			.btn{
+				background: #8e44ad;
+    			color: white;
+				transition: 0.2s all;
+			}
+			
+			.btn:hover{
+				background: #C393D6;
+				cursor: pointer;
 			}
 			
 		</style>
@@ -92,13 +104,13 @@
 	<body>
 		<div class="modal-container">
 			<div class="modal">
-				<h2>Animal planet in 3D, WITH SOCKETS!</h2>
+				<h3>Animal planet in 3D, WITH SOCKETS!</h3>
 				<form id="AnimalForm">
 					<p>
 						<label for="name">Your name</label><br>
 						<input type="text" id="name" placeholder="Enter name here..." />
 					</p>
-					<input type="submit" value="Enter world" />
+					<input class="btn" type="submit" value="Enter world" />
 				</form>
 			</div>
 		</div>
@@ -110,8 +122,8 @@
 				<br />Type message and ENTER to post.
 				<br />Be nice to each other!
 				<br />
-				<br />Chickens online:
-				<span id="chickencount"></span>
+				<br />Animals online:
+				<span id="animalcount"></span>
 			</div>
 			<div class="container">
 				<div class="message-box"></div>
