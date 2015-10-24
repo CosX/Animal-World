@@ -1,10 +1,10 @@
-var Player = function(startx, starty, startz, socket) {
+var Player = function(startx, starty, startz, name, socket) {
     var x = startx,
         y = starty,
         z = startz,
         socket = socket,
-        roty = 0,
         id,
+        name = name,
         message = "";
 
     // getters
@@ -23,10 +23,6 @@ var Player = function(startx, starty, startz, socket) {
 
     var getSocket = function() {
         return socket;
-    }
-
-    var getRotY = function() {
-        return roty;
     }
     
     var getMessage = function(){
@@ -51,9 +47,6 @@ var Player = function(startx, starty, startz, socket) {
         socket = socket;
     }
 
-    var setRotY = function(value) {
-        roty = value;
-    }
     
     var setMessage = function(value) {
         message = value;
@@ -63,19 +56,19 @@ var Player = function(startx, starty, startz, socket) {
         getX: getX,
         getY: getY,
         getZ: getZ,
-        getRotY: getRotY,
         getMessage: getMessage,
         getSocket: getSocket,
         setX: setX,
         setY: setY,
         setZ: setZ,
-        setRotY: setRotY,
         setSocket: setSocket,
         setMessage: setMessage,
         id: id,
         x: x,
+        y: y,
         z: z,
-        message: message
+        message: message, 
+        name : name
     }
 };
 

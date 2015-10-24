@@ -34,6 +34,7 @@ export class LoadModels{
 					new THREE.MeshFaceMaterial(materials)
 				);
 				mesh.receiveShadow = true;
+				mesh.castShadow = true;
 				fulfill(mesh);
 			});
 		});
@@ -43,20 +44,13 @@ export class LoadModels{
 		return new Promise( (fulfill, reject) => {
 			let loader = new THREE.JSONLoader();
 			loader.load(path, ( geometry, materials ) => {
-				var mesh, material;
-				
-				mesh = new THREE.SkinnedMesh(
-					geometry,
-					new THREE.MeshFaceMaterial(materials)
-				);
-				
-				material = mesh.material.materials;
-				
-				for (var i = 0; i < materials.length; i++) {
-					var mat = materials[i];
-					mat.skinning = true;
+				for ( var i = 0; i < materials.length; i ++ ) {
+					var m = materials[ i ];
+					m.skinning = true;
 				}
-				
+
+				var mesh = new THREE.SkinnedMesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+				mesh.geometry.dynamic = true;
 				mesh.castShadow = true;
 				mesh.receiveShadow = true;
 				fulfill(mesh);

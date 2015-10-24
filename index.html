@@ -12,17 +12,55 @@
 			}
 			input{
 			    position: absolute;
-			    bottom: 0;
-			    width: 100%;
+			    bottom: 10px;
+			    left: 10px;
+			    width: 300px;
 			    padding: 10px;
-			    font-size: 28px;
-    			border: 1px solid #bbb;
+			    font-size: 18px;
+			    border: 0;
+			    margin: 10px -10px;
 			}
 			.info{
-				  position:absolute;
-				  margin:10px;
-				  font-size:14px;
-				  color: white;
+				position: absolute;
+				padding: 10px;
+				font-size: 16px;
+				color: white;
+				width: 300px;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.45);	  
+			}
+			.info.away{
+				left: -320px;
+			}
+			.container{
+				position: relative;
+			    height: 50%;
+    			margin-top: 15px;
+			}
+			.message-box{
+			    overflow-y: auto;
+		        width: 310px;
+				position: absolute;
+				top:0;
+				bottom:0;
+			}
+			.message{
+				padding: 3px 0;
+			}
+			.name{
+				color:#bdc3c7;
+			}
+			.value{
+				color:#ecf0f1
+			}
+			.toggle-away{
+				position: absolute;
+			    margin-left: 310px;
+			    background: rgba(0, 0, 0, 0.45);
+			    padding: 5px;
+			}
+			.toggle-away:hover{
+				cursor: pointer;
 			}
 		</style>
 		<title>Chicken Egg!</title>
@@ -30,14 +68,21 @@
 	</head>
 	<body>
 		<div class="info">
-			<h2>Animal Planet with sockets!</h2>Tap on the ground to move
-			<br />Type message and ENTER to post.
-			<br />Be nice to each other!
-			<br />
-			<br />Chickens online:
-			<span id="chickencount"></span>
+			<div class="toggle-away">Toggle chat</div>
+			<div>
+				<h2>Animal Planet with sockets!</h2>Tap on the ground to move
+				<br />Type message and ENTER to post.
+				<br />Be nice to each other!
+				<br />
+				<br />Chickens online:
+				<span id="chickencount"></span>
+			</div>
+			<div class="container">
+				<div class="message-box"></div>
+			</div>
+			<input class="chat" placeholder="Type your message here..." type="text" />
 		</div>
-		<input class="chat" placeholder="Type your message here..." type="text" />
+		
 		
 		<script type="x-shader/x-vertex" id="vertexShader">
 
@@ -72,6 +117,7 @@
 		</script>
 		<script type="text/javascript" src="node_modules/three/three.min.js"></script>
 		<script type="text/javascript" src="lib/helvetiker_regular.typeface.js"></script>
+		<script type="text/javascript" src="lib/TrackBallControls.js"></script>
 		<script type="text/javascript" src="//cdn.socket.io/socket.io-1.2.0.js"></script>
 		<script type="text/javascript" src="dist/compiled.js"></script>
 	</body>

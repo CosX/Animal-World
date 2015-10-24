@@ -1,9 +1,10 @@
 /* global THREE */
 export class Chicken{
-	constructor(id, x, z, message, scale, reference, scene){
+	constructor(id, startposition, name, scale, reference, scene){
 		this.id = id;
 		this.scale = scale;
-		this.position = new THREE.Vector3(x, 0, z);
+		this.position = startposition;
+		this.target = new THREE.Vector3(0, 0, 0);
 		this.group = new THREE.Group();
 		this.scene = scene;
 		this.speed = 12;
@@ -11,54 +12,96 @@ export class Chicken{
 		this.moving = false;
 		this.rotating = false;
 		this.body = reference.cow.clone();
-		this.name = "Dave";
-		this.message = message;
+		this.bones = this.getBones();
+		this.name = name;
 		this.options = {
-			size: 2,
+			size: 1.4,
 			height: 10,
 			curveSegments: 2,
 			font: "helvetiker",
 			bevelEnabled: false
 		};
-		var textShapes = THREE.FontUtils.generateShapes( this.message, this.options );
+		var textShapes = THREE.FontUtils.generateShapes( this.name, this.options );
 		var text = new THREE.ShapeGeometry( textShapes );
-		this.textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: "#000000", side: THREE.DoubleSide } ) );
-		this.textMesh.position.y = 8;
-		this.textMesh.position.x = 0;
-		this.group.add( this.textMesh );
+		this.textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: "#333333", side: THREE.DoubleSide } ) );
+		this.textMesh.position.z = -5;
+		this.textMesh.position.y = 3;
+		this.body.add( this.textMesh );
 		this.loadModel(); 
 	}
 	
-	rotate(deg){
-		this.group.children.forEach(function(mesh){
-			if(mesh instanceof THREE.Mesh){
-				mesh.rotation.y += deg;
+	getBones(){
+		return [
+			{
+				name: "rightbehindleg",
+				leg: this.body.skeleton.bones[2],
+				goingforward: true
+			}, 
+			{
+				name: "leftbehindleg",
+				leg: this.body.skeleton.bones[4],
+				goingforward: false
+			},
+			{
+				name: "rightfrontleg",
+				leg: this.body.skeleton.bones[7],
+				goingforward: false
+			},
+			{
+				name: "leftfrontleg",
+				leg: this.body.skeleton.bones[9],
+				goingforward: true
 			}
-		});
+		];
 	}
 	
-	setText(val){
-		this.group.remove(this.textMesh);
-		let y = this.textMesh.position.y;
-		let x = this.textMesh.position.x;
-		let z = this.textMesh.position.z;
-		let rotation = this.textMesh.rotation.y;
-		var textShapes = THREE.FontUtils.generateShapes( val, this.options );
-		var text = new THREE.ShapeGeometry( textShapes );
-		this.message = val;
-		this.textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: "#000000", side: THREE.DoubleSide } ) ) ;
-		this.textMesh.position.set(x, y, z);
-		this.textMesh.rotation.y = rotation;
-		this.group.add( this.textMesh );
+	moveTowardsTarget(vec){
+		this.target = vec;
+		this.moving = true;
 	}
 	
-	setposition(x, z, rot){
-		this.group.children.forEach(function(mesh){
-			if(mesh instanceof THREE.Mesh){
-				mesh.rotation.y = rot;
-				mesh.position.x = x;
-				mesh.position.z = z;
+	updateMovement(mesh){
+		this.body.lookAt( this.target );
+		this.body.translateZ(0.5);
+		let pos = new THREE.Vector3(this.body.position.x*1.05 * this.scale, this.body.position.y*1.05 * this.scale, this.body.position.z*1.05 * this.scale);
+		let center = new THREE.Vector3( 0, 0, 0).sub(pos).normalize();
+		let raycaster = new THREE.Raycaster(pos, center);
+		let intersects = raycaster.intersectObject( mesh );
+		
+		if(intersects.length){
+			let point = intersects[ 0 ].point;
+			let newpoint = new THREE.Vector3(point.x / this.scale, point.y / this.scale, point.z / this.scale);
+			this.body.position.copy(newpoint);
+			let groundpoint = intersects[ 0 ].face.normal;
+			let v1 = this.target.clone().sub(this.body.position).normalize();
+  			let v2 = groundpoint.clone().sub(this.body.position).normalize();
+  			let v3 = new THREE.Vector3().crossVectors(v1, v2).normalize();
+  			this.body.up.copy( v3 );
+			this.body.lookAt(groundpoint);
+			
+			
+		}
+		
+		let distance = this.body.position.distanceTo( this.target );
+		if(distance < 1){
+			this.moving = false;
+		}
+		
+		this.updateAnimation();
+	}
+	
+	updateAnimation(){
+		this.bones.forEach((bone) => {
+			if(bone.goingforward){
+				bone.leg.rotation.y -= 0.02
+			} else{
+				bone.leg.rotation.y += 0.02
 			}
+			
+			if(bone.leg.rotation.y > 0.3 || bone.leg.rotation.y < -0.3){
+				bone.goingforward = !bone.goingforward;
+			}
+			
 		});
 	}
 	
@@ -69,7 +112,7 @@ export class Chicken{
 	loadModel(){
 		this.group.add(this.body);
 		this.group.scale.set( this.scale, this.scale, this.scale );
-		this.setposition(this.position.x, this.position.z, 0);
+		this.body.position.copy(this.position);
 		this.scene.add(this.group);
 	}
 }

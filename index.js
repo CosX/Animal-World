@@ -18,9 +18,9 @@ function onSocketConnection(client) {
     
     client.on("disconnect", onClientDisconnect);
 
-    client.on("new chicken", onNewChicken);
+    client.on("new animal", onNewPlayer);
 
-    client.on("move chicken", onMovePlayer);
+    client.on("move animal", onMovePlayer);
     
     client.on("new message", onNewMessage);
     
@@ -30,18 +30,21 @@ function onSocketConnection(client) {
 function onClientDisconnect() {
     var removePlayer = playerById(this.id);
     console.log(this.id + " disconnected!");
-    for (var index = 0; index < players.length; index++) {
-        if(players[index].id !== removePlayer.data.id){
-            players[index].getSocket().emit("removeplayer", {
-                id: removePlayer.data.id
-            });
+    if(typeof(removePlayer.data) !== "undefined"){
+        for (var index = 0; index < players.length; index++) {
+            if(players[index].id !== removePlayer.data.id){
+                players[index].getSocket().emit("removeplayer", {
+                    id: removePlayer.data.id
+                });
+            }
         }
+        players.splice(removePlayer.index, 1);
     }
-    players.splice(removePlayer.index, 1);
+    
 };
 
-function onNewChicken(data) {
-    var newPlayer = new Player(data.x, data.y, data.z, this);
+function onNewPlayer(data) {
+    var newPlayer = new Player(data.x, data.y, data.z, data.name, this);
     newPlayer.id = this.id;
 
     console.log(this.id + " created");
@@ -54,7 +57,7 @@ function onNewChicken(data) {
                 x: newPlayer.x,
                 y: newPlayer.y,
                 z: newPlayer.z,
-                roty: newPlayer.roty
+                name: newPlayer.name
             });
         }
     }
@@ -69,7 +72,7 @@ function onMovePlayer(data) {
 
     player.data.x = data.x;
     player.data.z = data.z;
-    player.data.roty = data.roty;
+    player.data.y = data.y;
     
     for (var index = 0; index < players.length; index++) {
         if(players[index].id !== player.data.id){
@@ -77,8 +80,7 @@ function onMovePlayer(data) {
                 id: player.data.id,
                 x: player.data.x,
                 y: player.data.y,
-                z: player.data.z,
-                roty: player.data.roty
+                z: player.data.z
             });
         }
     }
@@ -97,7 +99,8 @@ function onNewMessage(data){
         if(players[index].id !== player.data.id){
             players[index].getSocket().emit("message", {
                 id: player.data.id,
-                message: player.data.message
+                message: player.data.message,
+                name: player.data.name
             });
         }
     }
