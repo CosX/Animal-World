@@ -1,7 +1,7 @@
 let Play = require("./playground.js");
-
-let modal = document.querySelectorAll(".modal-container")[0];"modal-container"
+let modal = document.querySelectorAll(".modal-container")[0];
 let form = document.getElementById("AnimalForm");
+
 form.addEventListener("submit", function (event) {
 	event.preventDefault();
 	if(document.getElementById("name").value !== ""){
