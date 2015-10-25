@@ -55,8 +55,22 @@ export class Playground{
 			self.textboxIsActive = false;
 		}, true);
 		
-		this.renderer.domElement.addEventListener("mouseup", function(event){ self.onMouseUp(event) }, false);
-		this.renderer.domElement.addEventListener("mousedown", function(event){ self.onMouseDown(event) }, false);
+		this.renderer.domElement.addEventListener("touchend", function(event){ 
+			self.onMouseUp(self.translateTouchEvent(event))
+		}, false);
+		
+		this.renderer.domElement.addEventListener("touchstart", function(event){ 
+			self.onMouseDown(self.translateTouchEvent(event));
+		}, false);
+		
+		this.renderer.domElement.addEventListener("mouseup", function(event){ 
+			self.onMouseUp(event) 
+		}, false);
+		
+		this.renderer.domElement.addEventListener("mousedown", function(event){ 
+			self.onMouseDown(event) 
+		}, false);
+		
 		window.addEventListener("resize", function(){ self.onWindowResize() }, false );
 		window.addEventListener("keydown", function(event){ self.onKeyDown(event) }, false);
 		
@@ -138,7 +152,7 @@ export class Playground{
         let y = event.clientY;
         if( x != self.clientClickX || y != self.clientClickY ){return; }
 		
-		event.preventDefault();
+		//event.preventDefault();
 		var mouse = {	
 			x: ( x / window.innerWidth ) * 2 - 1,
 			y: - ( y / window.innerHeight ) * 2 + 1
@@ -177,6 +191,27 @@ export class Playground{
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
+	}
+	
+	translateTouchEvent(e) {
+	    e.stopPropagation();
+	    e.preventDefault();
+		if(e.touches.length){
+			return {
+				clientX: e.touches[0].clientX,
+				clientY: e.touches[0].clientY,
+				preventDefault: e.preventDefault,
+				target: this.renderer.domElement
+			};
+		} else {
+			return{
+				clientX: e.changedTouches[0].clientX,
+				clientY: e.changedTouches[0].clientY,
+				preventDefault: e.preventDefault,
+				target: this.renderer.domElement
+			};
+		}
+	    
 	}
 	
 	setskydome(){
