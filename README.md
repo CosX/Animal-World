@@ -1,5 +1,5 @@
 # Animal-World
-## WebGL animal world
+### WebGL animal world
 
 ![](http://blog.karlsolgard.net/content/images/2015/10/ezgif-472455998.gif)
 
