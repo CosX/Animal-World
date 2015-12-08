@@ -1,6 +1,6 @@
 /* global castShadow */
 /* global THREE */
-export class LoadModels{
+export default class LoadModels{
 	constructor(){
 		this.chicken = null;
 		this.cow = null;
@@ -12,19 +12,19 @@ export class LoadModels{
 			self.loadWorld(self)
 				.then((mesh) => { 
 					this.world = mesh;
-					return self.loadSkeletalModel("./reference/Chicken.json"); 
+					return self.loadSkeletalModel("./reference/Chicken.json");
 				})
-				.then((mesh) => { 
+				.then((mesh) => {
 					self.chicken = mesh;
-					return self.loadSkeletalModel("./reference/cow.json"); 
+					return self.loadSkeletalModel("./reference/cow.json");
 				})
-				.then((mesh) => { 
+				.then((mesh) => {
 					self.cow = mesh;
-					fulfill(); 
+					fulfill();
 				});
 		});
 	}
-	
+
 	loadWorld(ctx){
 		return new Promise((fulfill, reject) =>{
 			let loader = new THREE.JSONLoader();
@@ -39,7 +39,7 @@ export class LoadModels{
 			});
 		});
 	}
-	
+
 	loadSkeletalModel(path){
 		return new Promise( (fulfill, reject) => {
 			let loader = new THREE.JSONLoader();

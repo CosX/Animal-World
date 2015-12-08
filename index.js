@@ -3,7 +3,7 @@ var io = require('socket.io')(app);
 var fs = require('fs');
 var Player = require('./server/player').Player;
 
-app.listen(3000);
+app.listen(9200);
 
 var players = [];
 init();

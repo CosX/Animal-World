@@ -1,22 +1,27 @@
 {
-  "name": "Chickenegg",
+  "name": "animalplanet",
   "version": "1.0.0",
   "description": "Experiment 3D with Three.js and Babel.",
-  "author": "Karl <karl@karlsolgard.net>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Karl Solgård <karl@karlsolgard.net>",
+  "license": "MIT",
   "devDependencies": {
-	  "three": "*",
-    "gulp-sourcemaps": "*",
-    "gulp": "*",
-    "browserify": "*",
-    "babelify": "*",
-    "gulp-util": "*",
-    "vinyl-buffer": "*",
-    "vinyl-source-stream": "*",
-    "gulp-uglify":"*",
-    "babel": "*"
+    "babel-preset-es2015": "^6.1.18",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "gulp-babel": "^6.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-webserver": "^0.9.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.6.1"
   },
   "dependencies": {
-    "three": "*",
-    "socket.io": "*"
+    "three": "0.73.0",
+    "socket.io": "1.3.7"
   }
 }

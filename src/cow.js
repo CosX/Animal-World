@@ -1,5 +1,5 @@
 /* global THREE */
-export class Cow{
+export default class Cow{
 	constructor(id, startposition, name, scale, reference, scene){
 		this.id = id;
 		this.scale = scale;
@@ -27,16 +27,16 @@ export class Cow{
 		this.textMesh.position.z = -5;
 		this.textMesh.position.y = 3;
 		this.body.add( this.textMesh );
-		this.loadModel(); 
+		this.loadModel();
 	}
-	
+
 	getBones(){
 		return [
 			{
 				name: "rightbehindleg",
 				leg: this.body.skeleton.bones[2],
 				goingforward: true
-			}, 
+			},
 			{
 				name: "leftbehindleg",
 				leg: this.body.skeleton.bones[4],
@@ -54,12 +54,12 @@ export class Cow{
 			}
 		];
 	}
-	
+
 	moveTowardsTarget(vec){
 		this.target = vec;
 		this.moving = true;
 	}
-	
+
 	updateMovement(mesh){
 		this.body.lookAt( this.target );
 		this.body.translateZ(0.5);
@@ -67,29 +67,27 @@ export class Cow{
 		let center = new THREE.Vector3( 0, 0, 0).sub(pos).normalize();
 		let raycaster = new THREE.Raycaster(pos, center);
 		let intersects = raycaster.intersectObject( mesh );
-		
+
 		if(intersects.length){
 			let point = intersects[ 0 ].point;
 			let newpoint = new THREE.Vector3(point.x / this.scale, point.y / this.scale, point.z / this.scale);
 			this.body.position.copy(newpoint);
 			let groundpoint = intersects[ 0 ].face.normal;
 			let v1 = this.target.clone().sub(this.body.position).normalize();
-  			let v2 = groundpoint.clone().sub(this.body.position).normalize();
-  			let v3 = new THREE.Vector3().crossVectors(v1, v2).normalize();
-  			this.body.up.copy( v3 );
+			let v2 = groundpoint.clone().sub(this.body.position).normalize();
+			let v3 = new THREE.Vector3().crossVectors(v1, v2).normalize();
+			this.body.up.copy( v3 );
 			this.body.lookAt(groundpoint);
-			
-			
 		}
-		
+
 		let distance = this.body.position.distanceTo( this.target );
 		if(distance < 1){
 			this.moving = false;
 		}
-		
+
 		this.updateAnimation();
 	}
-	
+
 	updateAnimation(){
 		this.bones.forEach((bone) => {
 			if(bone.goingforward){
@@ -97,18 +95,17 @@ export class Cow{
 			} else{
 				bone.leg.rotation.y += 0.02
 			}
-			
+
 			if(bone.leg.rotation.y > 0.3 || bone.leg.rotation.y < -0.3){
 				bone.goingforward = !bone.goingforward;
 			}
-			
 		});
 	}
-	
+
 	remove(){
 		this.scene.remove(this.group);
 	}
-	
+
 	loadModel(){
 		this.group.add(this.body);
 		this.group.scale.set( this.scale, this.scale, this.scale );
