@@ -1,5 +1,3 @@
-/* global castShadow */
-/* global THREE */
 export default class LoadModels{
 	constructor(){
 		this.chicken = null;
@@ -10,7 +8,7 @@ export default class LoadModels{
 		let self = this;
 		return new Promise((fulfill, reject) => {
 			self.loadWorld(self)
-				.then((mesh) => { 
+				.then((mesh) => {
 					this.world = mesh;
 					return self.loadSkeletalModel("./reference/Chicken.json");
 				})
@@ -19,7 +17,7 @@ export default class LoadModels{
 					return self.loadSkeletalModel("./reference/cow.json");
 				})
 				.then((mesh) => {
-					self.cow = mesh;
+					self.cow = mesh; 
 					fulfill();
 				});
 		});

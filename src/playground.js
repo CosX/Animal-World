@@ -1,7 +1,5 @@
-/* global io */
-/* global THREE */
 import Cow from "./cow.js";
-import World = from "./world.js";
+import World from "./world.js";
 import LoadModels from "./loadmodels.js";
 import ChatHandler from "./chatHandler.js";
 
@@ -14,7 +12,7 @@ export default class Playground{
 		this.world;
 		this.animal = null;
 		this.animals = [];
-		this.clock = new THREE.Clock()
+		this.clock = new THREE.Clock();
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
 
