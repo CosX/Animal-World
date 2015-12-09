@@ -3,7 +3,7 @@ import Playground from './playground.js'
 let modal = document.querySelectorAll(".modal-container")[0];
 let form = document.getElementById("AnimalForm");
 
-form.addEventListener("submit", function (event) {
+form.addEventListener("submit", (event) => {
 	event.preventDefault();
 	if(document.getElementById("name").value !== ""){
 		modal.style.display = 'none';

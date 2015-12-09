@@ -1,4 +1,3 @@
-/* global THREE */
 export default class Cow{
 	constructor(id, startposition, name, scale, reference, scene){
 		this.id = id;
