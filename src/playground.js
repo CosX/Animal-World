@@ -1,10 +1,11 @@
 import Cow from "./cow.js";
+import Chicken from "./chicken.js";
 import World from "./world.js";
 import LoadModels from "./loadmodels.js";
 import ChatHandler from "./chatHandler.js";
 
 export default class Playground{
-	constructor(name){
+	constructor(name, animal){
 		let self = this;
 
 		this.socket = null;
@@ -23,7 +24,7 @@ export default class Playground{
 		this.renderer = new THREE.WebGLRenderer( { antialias: true } );
 
 		this.camera.position.set(75, 0, -40);
-		this.camera.target = new THREE.Vector3( 0, 0, 0 );
+		this.camera.target = new THREE.Vector3(0, 0, 0);
 		this.camera.up.set(1, 0, -1);
 		this.camera.lookAt( this.camera.target );
 
@@ -31,8 +32,8 @@ export default class Playground{
 		this.setskydome();
 		this.setrenderer();
 
-		this.controls = new THREE.TrackballControls( this.camera, this.renderer.domElement );
-		this.controls.target.copy( this.camera.target );
+		this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+		this.controls.target.copy(this.camera.target);
 		this.controls.noPan = true;
 		this.controls.rotateSpeed = 8.0;
 		this.controls.minDistance = 20;
@@ -75,22 +76,29 @@ export default class Playground{
 		this.reference = new LoadModels();
 		this.reference.load().then(() => {
 			self.socket = io.connect("http://localhost:9200/");
-			self.initialize(name);
+			self.initialize(name, animal);
 		});
-
 	}
 
-	initialize(name){
+	initialize(name, animal){
 		let self = this;
 
 		this.world = new World(this.reference, 500);
 		this.world.loadToScene(this.scene);
 
 		this.socket.on("giveid", (id) => {
-			self.animal = new Cow(id, new THREE.Vector3(37.049533439151695, 504.9169002010969, 152.38907703563717), name, 4, self.reference, self.scene);
+			const x = 37.049533439151695,
+						y = 504.9169002010969,
+						z = 152.38907703563717;
+			if(animal === "cow"){
+				self.animal = new Cow(id, new THREE.Vector3(x, y, z), name, 4, self.reference.cow, self.scene);
+			} else{
+				self.animal = new Chicken(id, new THREE.Vector3(x, y, z), name, 3, self.reference.chicken, self.scene);
+			}
+
 			self.draw();
 			self.animal.updateMovement(self.world.mesh);
-			console.log(self.animal.body.position);
+
 			self.socket.emit("new animal", {
 				x: self.animal.body.position.x,
 				y: self.animal.body.position.y,
@@ -150,7 +158,6 @@ export default class Playground{
         let y = event.clientY;
         if( x != self.clientClickX || y != self.clientClickY ){return; }
 
-		//event.preventDefault();
 		var mouse = {
 			x: ( x / window.innerWidth ) * 2 - 1,
 			y: - ( y / window.innerHeight ) * 2 + 1

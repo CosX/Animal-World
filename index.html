@@ -98,7 +98,7 @@
 }
 }
 
-.modal input {
+.modal input[type="text"], .modal input[type="submit"] {
 	padding: 10px;
 	width: 100%;
 	border: 0;
@@ -127,7 +127,11 @@
 				<form id="AnimalForm">
 					<p>
 						<label for="name">Your name</label><br>
-						<input type="text" id="name" placeholder="Enter name here..." />
+						<input type="text" id="name" placeholder="Enter name here..." /><br><br>
+						<label for="animal">Choose your animal</label><br>
+						<input type="radio" name="animal" value="cow" checked>Cow
+					  <br>
+					  <input type="radio" name="animal" value="chicken">Chicken
 					</p>
 					<input class="btn" type="submit" value="Enter world" />
 				</form>

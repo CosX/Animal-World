@@ -12,15 +12,126 @@ var form = document.getElementById("AnimalForm");
 
 form.addEventListener("submit", function (event) {
 	event.preventDefault();
-	if (document.getElementById("name").value !== "") {
-		modal.style.display = 'none';
-		new _playground2.default(document.getElementById("name").value);
+	var animal = document.querySelector("input[name='animal']:checked").value;
+	var name = document.getElementById("name").value;
+	if (name !== "") {
+		modal.style.display = "none";
+		new _playground2.default(name, animal);
 	} else {
 		alert("Enter name plz!");
 	}
 });
 
-},{"./playground.js":5}],2:[function(require,module,exports){
+},{"./playground.js":7}],2:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var BaseAnimal = (function () {
+	function BaseAnimal(id, startposition, name, scale, reference, scene) {
+		_classCallCheck(this, BaseAnimal);
+
+		this.id = id;
+		this.scale = scale;
+		this.position = startposition;
+		this.target = new THREE.Vector3(0, 0, 0);
+		this.group = new THREE.Group();
+		this.scene = scene;
+		this.speed = 12;
+		this.rotation = 0;
+		this.moving = false;
+		this.rotating = false;
+		this.body = reference.clone();
+		this.bones = this.getBones();
+		this.name = name;
+		this.options = {
+			size: 1.4,
+			height: 10,
+			curveSegments: 2,
+			font: "helvetiker",
+			bevelEnabled: false
+		};
+		var textShapes = THREE.FontUtils.generateShapes(this.name, this.options);
+		var text = new THREE.ShapeGeometry(textShapes);
+		this.textMesh = new THREE.Mesh(text, new THREE.MeshBasicMaterial({ color: "#000000", side: THREE.DoubleSide }));
+		this.textMesh.position.z = -5;
+		this.textMesh.position.y = 3;
+		this.body.add(this.textMesh);
+		this.loadModel();
+	}
+
+	_createClass(BaseAnimal, [{
+		key: "getBones",
+		value: function getBones() {
+			throw new Error("Must be implemented by an animal.");
+		}
+	}, {
+		key: "moveTowardsTarget",
+		value: function moveTowardsTarget(vec) {
+			this.target = vec;
+			this.moving = true;
+		}
+	}, {
+		key: "updateMovement",
+		value: function updateMovement(mesh) {
+			this.body.lookAt(this.target);
+			this.body.translateZ(0.5);
+			var pos = new THREE.Vector3(this.body.position.x * 1.05 * this.scale, this.body.position.y * 1.05 * this.scale, this.body.position.z * 1.05 * this.scale);
+			var center = new THREE.Vector3(0, 0, 0).sub(pos).normalize();
+			var raycaster = new THREE.Raycaster(pos, center);
+			var intersects = raycaster.intersectObject(mesh);
+
+			if (intersects.length) {
+				var point = intersects[0].point;
+				var newpoint = new THREE.Vector3(point.x / this.scale, point.y / this.scale, point.z / this.scale);
+				this.body.position.copy(newpoint);
+				var groundpoint = intersects[0].face.normal;
+				var v1 = this.target.clone().sub(this.body.position).normalize();
+				var v2 = groundpoint.clone().sub(this.body.position).normalize();
+				var v3 = new THREE.Vector3().crossVectors(v1, v2).normalize();
+				this.body.up.copy(v3);
+				this.body.lookAt(groundpoint);
+			}
+
+			var distance = this.body.position.distanceTo(this.target);
+			if (distance < 1) {
+				this.moving = false;
+			}
+
+			this.updateAnimation();
+		}
+	}, {
+		key: "updateAnimation",
+		value: function updateAnimation() {
+			throw new Error("Must be implemented by an animal.");
+		}
+	}, {
+		key: "remove",
+		value: function remove() {
+			this.scene.remove(this.group);
+		}
+	}, {
+		key: "loadModel",
+		value: function loadModel() {
+			this.group.add(this.body);
+			this.group.scale.set(this.scale, this.scale, this.scale);
+			this.body.position.copy(this.position);
+			this.scene.add(this.group);
+		}
+	}]);
+
+	return BaseAnimal;
+})();
+
+exports.default = BaseAnimal;
+
+},{}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -63,7 +174,7 @@ var ChatHandler = (function () {
 
 exports.default = ChatHandler;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -72,39 +183,90 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _baseanimal = require("./baseanimal.js");
+
+var _baseanimal2 = _interopRequireDefault(_baseanimal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Cow = (function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Chicken = (function (_BaseAnimal) {
+	_inherits(Chicken, _BaseAnimal);
+
+	function Chicken(id, startposition, name, scale, reference, scene) {
+		_classCallCheck(this, Chicken);
+
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(Chicken).call(this, id, startposition, name, scale, reference, scene));
+	}
+
+	_createClass(Chicken, [{
+		key: "getBones",
+		value: function getBones() {
+			return [{
+				name: "leftleg",
+				leg: this.body.skeleton.bones[3],
+				goingforward: true
+			}, {
+				name: "rightleg",
+				leg: this.body.skeleton.bones[5],
+				goingforward: false
+			}];
+		}
+	}, {
+		key: "updateAnimation",
+		value: function updateAnimation() {
+			this.bones.forEach(function (bone) {
+				if (bone.goingforward) {
+					bone.leg.rotation.z -= 0.02;
+				} else {
+					bone.leg.rotation.z += 0.02;
+				}
+
+				if (bone.leg.rotation.z > 0.3 || bone.leg.rotation.z < -0.3) {
+					bone.goingforward = !bone.goingforward;
+				}
+			});
+		}
+	}]);
+
+	return Chicken;
+})(_baseanimal2.default);
+
+exports.default = Chicken;
+
+},{"./baseanimal.js":2}],5:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _baseanimal = require("./baseanimal.js");
+
+var _baseanimal2 = _interopRequireDefault(_baseanimal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Cow = (function (_BaseAnimal) {
+	_inherits(Cow, _BaseAnimal);
+
 	function Cow(id, startposition, name, scale, reference, scene) {
 		_classCallCheck(this, Cow);
 
-		this.id = id;
-		this.scale = scale;
-		this.position = startposition;
-		this.target = new THREE.Vector3(0, 0, 0);
-		this.group = new THREE.Group();
-		this.scene = scene;
-		this.speed = 12;
-		this.rotation = 0;
-		this.moving = false;
-		this.rotating = false;
-		this.body = reference.cow.clone();
-		this.bones = this.getBones();
-		this.name = name;
-		this.options = {
-			size: 1.4,
-			height: 10,
-			curveSegments: 2,
-			font: "helvetiker",
-			bevelEnabled: false
-		};
-		var textShapes = THREE.FontUtils.generateShapes(this.name, this.options);
-		var text = new THREE.ShapeGeometry(textShapes);
-		this.textMesh = new THREE.Mesh(text, new THREE.MeshBasicMaterial({ color: "#000000", side: THREE.DoubleSide }));
-		this.textMesh.position.z = -5;
-		this.textMesh.position.y = 3;
-		this.body.add(this.textMesh);
-		this.loadModel();
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(Cow).call(this, id, startposition, name, scale, reference, scene));
 	}
 
 	_createClass(Cow, [{
@@ -129,41 +291,6 @@ var Cow = (function () {
 			}];
 		}
 	}, {
-		key: "moveTowardsTarget",
-		value: function moveTowardsTarget(vec) {
-			this.target = vec;
-			this.moving = true;
-		}
-	}, {
-		key: "updateMovement",
-		value: function updateMovement(mesh) {
-			this.body.lookAt(this.target);
-			this.body.translateZ(0.5);
-			var pos = new THREE.Vector3(this.body.position.x * 1.05 * this.scale, this.body.position.y * 1.05 * this.scale, this.body.position.z * 1.05 * this.scale);
-			var center = new THREE.Vector3(0, 0, 0).sub(pos).normalize();
-			var raycaster = new THREE.Raycaster(pos, center);
-			var intersects = raycaster.intersectObject(mesh);
-
-			if (intersects.length) {
-				var point = intersects[0].point;
-				var newpoint = new THREE.Vector3(point.x / this.scale, point.y / this.scale, point.z / this.scale);
-				this.body.position.copy(newpoint);
-				var groundpoint = intersects[0].face.normal;
-				var v1 = this.target.clone().sub(this.body.position).normalize();
-				var v2 = groundpoint.clone().sub(this.body.position).normalize();
-				var v3 = new THREE.Vector3().crossVectors(v1, v2).normalize();
-				this.body.up.copy(v3);
-				this.body.lookAt(groundpoint);
-			}
-
-			var distance = this.body.position.distanceTo(this.target);
-			if (distance < 1) {
-				this.moving = false;
-			}
-
-			this.updateAnimation();
-		}
-	}, {
 		key: "updateAnimation",
 		value: function updateAnimation() {
 			this.bones.forEach(function (bone) {
@@ -178,27 +305,14 @@ var Cow = (function () {
 				}
 			});
 		}
-	}, {
-		key: "remove",
-		value: function remove() {
-			this.scene.remove(this.group);
-		}
-	}, {
-		key: "loadModel",
-		value: function loadModel() {
-			this.group.add(this.body);
-			this.group.scale.set(this.scale, this.scale, this.scale);
-			this.body.position.copy(this.position);
-			this.scene.add(this.group);
-		}
 	}]);
 
 	return Cow;
-})();
+})(_baseanimal2.default);
 
 exports.default = Cow;
 
-},{}],4:[function(require,module,exports){
+},{"./baseanimal.js":2}],6:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -276,7 +390,7 @@ var LoadModels = (function () {
 
 exports.default = LoadModels;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -288,6 +402,10 @@ Object.defineProperty(exports, "__esModule", {
 var _cow = require("./cow.js");
 
 var _cow2 = _interopRequireDefault(_cow);
+
+var _chicken = require("./chicken.js");
+
+var _chicken2 = _interopRequireDefault(_chicken);
 
 var _world = require("./world.js");
 
@@ -306,7 +424,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Playground = (function () {
-	function Playground(name) {
+	function Playground(name, animal) {
 		_classCallCheck(this, Playground);
 
 		var self = this;
@@ -383,23 +501,31 @@ var Playground = (function () {
 		this.reference = new _loadmodels2.default();
 		this.reference.load().then(function () {
 			self.socket = io.connect("http://localhost:9200/");
-			self.initialize(name);
+			self.initialize(name, animal);
 		});
 	}
 
 	_createClass(Playground, [{
 		key: "initialize",
-		value: function initialize(name) {
+		value: function initialize(name, animal) {
 			var self = this;
 
 			this.world = new _world2.default(this.reference, 500);
 			this.world.loadToScene(this.scene);
 
 			this.socket.on("giveid", function (id) {
-				self.animal = new _cow2.default(id, new THREE.Vector3(37.049533439151695, 504.9169002010969, 152.38907703563717), name, 4, self.reference, self.scene);
+				var x = 37.049533439151695,
+				    y = 504.9169002010969,
+				    z = 152.38907703563717;
+				if (animal === "cow") {
+					self.animal = new _cow2.default(id, new THREE.Vector3(x, y, z), name, 4, self.reference.cow, self.scene);
+				} else {
+					self.animal = new _chicken2.default(id, new THREE.Vector3(x, y, z), name, 3, self.reference.chicken, self.scene);
+				}
+
 				self.draw();
 				self.animal.updateMovement(self.world.mesh);
-				console.log(self.animal.body.position);
+
 				self.socket.emit("new animal", {
 					x: self.animal.body.position.x,
 					y: self.animal.body.position.y,
@@ -466,7 +592,6 @@ var Playground = (function () {
 				return;
 			}
 
-			//event.preventDefault();
 			var mouse = {
 				x: x / window.innerWidth * 2 - 1,
 				y: -(y / window.innerHeight) * 2 + 1
@@ -632,7 +757,7 @@ var Playground = (function () {
 
 exports.default = Playground;
 
-},{"./chatHandler.js":2,"./cow.js":3,"./loadmodels.js":4,"./world.js":6}],6:[function(require,module,exports){
+},{"./chatHandler.js":3,"./chicken.js":4,"./cow.js":5,"./loadmodels.js":6,"./world.js":8}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();

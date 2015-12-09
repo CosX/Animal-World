@@ -14,10 +14,10 @@ export default class ChatHandler {
 	}
 
 	appendMessage(name, value){
-		var div = document.createElement('div'); 
-	    div.className = 'message';
-	    div.innerHTML = `<span class="name">${name}</span>: <span class="value">${value}</span>`;
-     	this.messagebox.appendChild(div);
+		var div = document.createElement('div');
+    div.className = 'message';
+    div.innerHTML = `<span class="name">${name}</span>: <span class="value">${value}</span>`;
+   	this.messagebox.appendChild(div);
 	 	this.messagebox.scrollTop = this.messagebox.scrollHeight;
 	}
 }
