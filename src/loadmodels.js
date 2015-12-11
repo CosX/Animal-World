@@ -10,14 +10,14 @@ export default class LoadModels{
 			self.loadWorld(self)
 				.then((mesh) => {
 					this.world = mesh;
-					return self.loadSkeletalModel("./reference/Chicken.json");
+					return self.loadSkeletalModel("./reference/chicken1.json");
 				})
 				.then((mesh) => {
 					self.chicken = mesh;
 					return self.loadSkeletalModel("./reference/cow.json");
 				})
 				.then((mesh) => {
-					self.cow = mesh; 
+					self.cow = mesh;
 					fulfill();
 				});
 		});

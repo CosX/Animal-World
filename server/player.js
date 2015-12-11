@@ -1,11 +1,12 @@
-var Player = function(startx, starty, startz, name, socket) {
+var Player = function(startx, starty, startz, name, animaltype, socket) {
     var x = startx,
         y = starty,
         z = startz,
         socket = socket,
         id,
         name = name,
-        message = "";
+        message = "",
+        animaltype = animaltype;
 
     // getters
 
@@ -24,7 +25,7 @@ var Player = function(startx, starty, startz, name, socket) {
     var getSocket = function() {
         return socket;
     }
-    
+
     var getMessage = function(){
         return message;
     }
@@ -47,7 +48,7 @@ var Player = function(startx, starty, startz, name, socket) {
         socket = socket;
     }
 
-    
+
     var setMessage = function(value) {
         message = value;
     }
@@ -67,8 +68,9 @@ var Player = function(startx, starty, startz, name, socket) {
         x: x,
         y: y,
         z: z,
-        message: message, 
-        name : name
+        message: message,
+        name : name,
+        animaltype: animaltype
     }
 };
 

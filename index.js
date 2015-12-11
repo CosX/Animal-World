@@ -13,18 +13,18 @@ function init() {
 
 function onSocketConnection(client) {
     client.emit("giveid", client.id);
-    
+
     client.emit("allplayers", players);
-    
+
     client.on("disconnect", onClientDisconnect);
 
     client.on("new animal", onNewPlayer);
 
     client.on("move animal", onMovePlayer);
-    
+
     client.on("new message", onNewMessage);
-    
-    
+
+
 };
 
 function onClientDisconnect() {
@@ -40,16 +40,16 @@ function onClientDisconnect() {
         }
         players.splice(removePlayer.index, 1);
     }
-    
+
 };
 
 function onNewPlayer(data) {
-    var newPlayer = new Player(data.x, data.y, data.z, data.name, this);
+    var newPlayer = new Player(data.x, data.y, data.z, data.name, data.animaltype, this);
     newPlayer.id = this.id;
 
     console.log(this.id + " created");
     players.push(newPlayer);
-    
+
     for (var index = 0; index < players.length; index++) {
         if(players[index].id !== newPlayer.id){
             players[index].getSocket().emit("newplayer", {
@@ -61,7 +61,7 @@ function onNewPlayer(data) {
             });
         }
     }
-    
+
 }
 
 function onMovePlayer(data) {
@@ -73,7 +73,7 @@ function onMovePlayer(data) {
     player.data.x = data.x;
     player.data.z = data.z;
     player.data.y = data.y;
-    
+
     for (var index = 0; index < players.length; index++) {
         if(players[index].id !== player.data.id){
             players[index].getSocket().emit("move", {
@@ -93,7 +93,7 @@ function onNewMessage(data){
     if (!player) {
         return;
     };
-    
+
     player.data.message = data.message;
     for (var index = 0; index < players.length; index++) {
         if(players[index].id !== player.data.id){
@@ -106,7 +106,7 @@ function onNewMessage(data){
     }
     players[player.index] = player.data;
     fs.appendFile('messages.txt', player.data.name + ": " + data.message + " @ " + timeStamp()  + "\n", function(){
-        
+
     });
 };
 

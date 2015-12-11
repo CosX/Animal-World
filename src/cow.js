@@ -2,6 +2,7 @@ import BaseAnimal from "./baseanimal.js";
 export default class Cow extends BaseAnimal {
 	constructor(id, startposition, name, scale, reference, scene){
 		super(id, startposition, name, scale, reference, scene);
+		this.animaltype = "cow";
 	}
 
 	getBones(){

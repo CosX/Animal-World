@@ -90,11 +90,7 @@ export default class Playground{
 			const x = 37.049533439151695,
 						y = 504.9169002010969,
 						z = 152.38907703563717;
-			if(animal === "cow"){
-				self.animal = new Cow(id, new THREE.Vector3(x, y, z), name, 4, self.reference.cow, self.scene);
-			} else{
-				self.animal = new Chicken(id, new THREE.Vector3(x, y, z), name, 3, self.reference.chicken, self.scene);
-			}
+			self.animal = self.getAnimal(id, name, animal, new THREE.Vector3(x, y, z));
 
 			self.draw();
 			self.animal.updateMovement(self.world.mesh);
@@ -103,13 +99,14 @@ export default class Playground{
 				x: self.animal.body.position.x,
 				y: self.animal.body.position.y,
 				z: self.animal.body.position.z,
-				name: self.animal.name
+				name: self.animal.name,
+				animaltype: self.animal.animaltype
 			});
 			self.animal.body.add(self.camera);
 		});
 		self.socket.on("allplayers", (data) => {
 			data.forEach((animal) => {
-				let c = new Cow(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
+				let c = self.getAnimal(animal.id, animal.name, animal.animaltype, new THREE.Vector3(animal.x, animal.y, animal.z));
 				c.updateMovement(self.world.mesh);
 				self.animals.push(c);
 			});
@@ -117,7 +114,7 @@ export default class Playground{
 		});
 
 		self.socket.on("newplayer", (animal) => {
-			let ani = new Cow(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
+			let ani = self.getAnimal(animal.id, animal.name, animal.animaltype, new THREE.Vector3(animal.x, animal.y, animal.z));
 			ani.updateMovement(self.world.mesh);
 			self.animals.push(ani);
 			document.querySelector("#animalcount").textContent = self.animals.length + 1;
@@ -180,12 +177,20 @@ export default class Playground{
 
 	}
 
+	getAnimal(id, name, animal, pos){
+		if(animal === "cow"){
+			return new Cow(id, pos, name, 4, this.reference.cow, this.scene);
+		} else{
+			return new Chicken(id, pos, name, 4, this.reference.chicken, this.scene);
+		}
+	}
+
 	onKeyDown(event){
 		let self = this;
   		let keyCode = event.keyCode;
 	  	if(this.textboxIsActive && keyCode === 13 && self.textbox.value !== ""){
 		  	self.socket.emit("new message", {
-				message: self.textbox.value
+					message: self.textbox.value
 		  	});
 		  	self.chat.appendMessage(self.animal.name, self.textbox.value);
 	   		self.textbox.value = "";

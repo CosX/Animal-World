@@ -50,6 +50,7 @@ var BaseAnimal = (function () {
 		this.body = reference.clone();
 		this.bones = this.getBones();
 		this.name = name;
+		this.animaltype = "";
 		this.options = {
 			size: 1.4,
 			height: 10,
@@ -201,7 +202,10 @@ var Chicken = (function (_BaseAnimal) {
 	function Chicken(id, startposition, name, scale, reference, scene) {
 		_classCallCheck(this, Chicken);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(Chicken).call(this, id, startposition, name, scale, reference, scene));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Chicken).call(this, id, startposition, name, scale, reference, scene));
+
+		_this.animaltype = "chicken";
+		return _this;
 	}
 
 	_createClass(Chicken, [{
@@ -222,12 +226,12 @@ var Chicken = (function (_BaseAnimal) {
 		value: function updateAnimation() {
 			this.bones.forEach(function (bone) {
 				if (bone.goingforward) {
-					bone.leg.rotation.z -= 0.02;
+					bone.leg.rotation.y -= 0.02;
 				} else {
-					bone.leg.rotation.z += 0.02;
+					bone.leg.rotation.y += 0.02;
 				}
 
-				if (bone.leg.rotation.z > 0.3 || bone.leg.rotation.z < -0.3) {
+				if (bone.leg.rotation.y > 0.3 || bone.leg.rotation.y < -0.3) {
 					bone.goingforward = !bone.goingforward;
 				}
 			});
@@ -266,7 +270,10 @@ var Cow = (function (_BaseAnimal) {
 	function Cow(id, startposition, name, scale, reference, scene) {
 		_classCallCheck(this, Cow);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(Cow).call(this, id, startposition, name, scale, reference, scene));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Cow).call(this, id, startposition, name, scale, reference, scene));
+
+		_this.animaltype = "cow";
+		return _this;
 	}
 
 	_createClass(Cow, [{
@@ -341,7 +348,7 @@ var LoadModels = (function () {
 			return new Promise(function (fulfill, reject) {
 				self.loadWorld(self).then(function (mesh) {
 					_this.world = mesh;
-					return self.loadSkeletalModel("./reference/Chicken.json");
+					return self.loadSkeletalModel("./reference/chicken1.json");
 				}).then(function (mesh) {
 					self.chicken = mesh;
 					return self.loadSkeletalModel("./reference/cow.json");
@@ -517,11 +524,7 @@ var Playground = (function () {
 				var x = 37.049533439151695,
 				    y = 504.9169002010969,
 				    z = 152.38907703563717;
-				if (animal === "cow") {
-					self.animal = new _cow2.default(id, new THREE.Vector3(x, y, z), name, 4, self.reference.cow, self.scene);
-				} else {
-					self.animal = new _chicken2.default(id, new THREE.Vector3(x, y, z), name, 3, self.reference.chicken, self.scene);
-				}
+				self.animal = self.getAnimal(id, name, animal, new THREE.Vector3(x, y, z));
 
 				self.draw();
 				self.animal.updateMovement(self.world.mesh);
@@ -530,13 +533,14 @@ var Playground = (function () {
 					x: self.animal.body.position.x,
 					y: self.animal.body.position.y,
 					z: self.animal.body.position.z,
-					name: self.animal.name
+					name: self.animal.name,
+					animaltype: self.animal.animaltype
 				});
 				self.animal.body.add(self.camera);
 			});
 			self.socket.on("allplayers", function (data) {
 				data.forEach(function (animal) {
-					var c = new _cow2.default(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
+					var c = self.getAnimal(animal.id, animal.name, animal.animaltype, new THREE.Vector3(animal.x, animal.y, animal.z));
 					c.updateMovement(self.world.mesh);
 					self.animals.push(c);
 				});
@@ -544,7 +548,7 @@ var Playground = (function () {
 			});
 
 			self.socket.on("newplayer", function (animal) {
-				var ani = new _cow2.default(animal.id, new THREE.Vector3(animal.x, animal.y, animal.z), animal.name, 4, self.reference, self.scene);
+				var ani = self.getAnimal(animal.id, animal.name, animal.animaltype, new THREE.Vector3(animal.x, animal.y, animal.z));
 				ani.updateMovement(self.world.mesh);
 				self.animals.push(ani);
 				document.querySelector("#animalcount").textContent = self.animals.length + 1;
@@ -610,6 +614,15 @@ var Playground = (function () {
 					y: newpoint.y,
 					z: newpoint.z
 				});
+			}
+		}
+	}, {
+		key: "getAnimal",
+		value: function getAnimal(id, name, animal, pos) {
+			if (animal === "cow") {
+				return new _cow2.default(id, pos, name, 4, this.reference.cow, this.scene);
+			} else {
+				return new _chicken2.default(id, pos, name, 4, this.reference.chicken, this.scene);
 			}
 		}
 	}, {

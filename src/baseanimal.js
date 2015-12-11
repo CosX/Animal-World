@@ -13,6 +13,7 @@ export default class BaseAnimal{
 		this.body = reference.clone();
 		this.bones = this.getBones();
 		this.name = name;
+    this.animaltype = "";
 		this.options = {
 			size: 1.4,
 			height: 10,
