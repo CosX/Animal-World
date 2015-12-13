@@ -224,7 +224,7 @@ var Chicken = (function (_BaseAnimal) {
 	}, {
 		key: "updateAnimation",
 		value: function updateAnimation() {
-			this.bones.forEach(function (bone) {
+			this.bones.map(function (bone) {
 				if (bone.goingforward) {
 					bone.leg.rotation.y -= 0.01;
 				} else {
@@ -300,7 +300,7 @@ var Cow = (function (_BaseAnimal) {
 	}, {
 		key: "updateAnimation",
 		value: function updateAnimation() {
-			this.bones.forEach(function (bone) {
+			this.bones.map(function (bone) {
 				if (bone.goingforward) {
 					bone.leg.rotation.y -= 0.02;
 				} else {
@@ -539,7 +539,7 @@ var Playground = (function () {
 				self.animal.body.add(self.camera);
 			});
 			self.socket.on("allplayers", function (data) {
-				data.forEach(function (animal) {
+				data.map(function (animal) {
 					var c = self.getAnimal(animal.id, animal.name, animal.animaltype, new THREE.Vector3(animal.x, animal.y, animal.z));
 					c.updateMovement(self.world.mesh);
 					self.animals.push(c);
@@ -750,7 +750,7 @@ var Playground = (function () {
 
 			self.handleMovement(self.animal);
 
-			self.animals.forEach(function (animal) {
+			self.animals.map(function (animal) {
 				self.handleMovement(animal);
 			});
 		}

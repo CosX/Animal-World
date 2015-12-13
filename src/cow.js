@@ -31,7 +31,7 @@ export default class Cow extends BaseAnimal {
 	}
 
 	updateAnimation(){
-		this.bones.forEach((bone) => {
+		this.bones.map((bone) => {
 			if(bone.goingforward){
 				bone.leg.rotation.y -= 0.02
 			} else{

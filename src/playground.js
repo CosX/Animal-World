@@ -105,7 +105,7 @@ export default class Playground{
 			self.animal.body.add(self.camera);
 		});
 		self.socket.on("allplayers", (data) => {
-			data.forEach((animal) => {
+			data.map((animal) => {
 				let c = self.getAnimal(animal.id, animal.name, animal.animaltype, new THREE.Vector3(animal.x, animal.y, animal.z));
 				c.updateMovement(self.world.mesh);
 				self.animals.push(c);
@@ -145,7 +145,7 @@ export default class Playground{
 	}
 	onMouseDown(event){
 		this.clientClickX = event.clientX;
-    	this.clientClickY = event.clientY;
+  	this.clientClickY = event.clientY;
 	}
 
 	onMouseUp(event){
@@ -174,7 +174,6 @@ export default class Playground{
 				z: newpoint.z
 			});
 		}
-
 	}
 
 	getAnimal(id, name, animal, pos){
@@ -301,7 +300,7 @@ export default class Playground{
 
 		self.handleMovement(self.animal);
 
-		self.animals.forEach((animal) => {
+		self.animals.map((animal) => {
 			self.handleMovement(animal);
 		});
 	}
