@@ -213,11 +213,11 @@ var Chicken = (function (_BaseAnimal) {
 		value: function getBones() {
 			return [{
 				name: "leftleg",
-				leg: this.body.skeleton.bones[3],
+				leg: this.body.skeleton.bones[2],
 				goingforward: true
 			}, {
 				name: "rightleg",
-				leg: this.body.skeleton.bones[5],
+				leg: this.body.skeleton.bones[4],
 				goingforward: false
 			}];
 		}
@@ -226,12 +226,12 @@ var Chicken = (function (_BaseAnimal) {
 		value: function updateAnimation() {
 			this.bones.forEach(function (bone) {
 				if (bone.goingforward) {
-					bone.leg.rotation.y -= 0.02;
+					bone.leg.rotation.y -= 0.01;
 				} else {
-					bone.leg.rotation.y += 0.02;
+					bone.leg.rotation.y += 0.01;
 				}
 
-				if (bone.leg.rotation.y > 0.3 || bone.leg.rotation.y < -0.3) {
+				if (bone.leg.rotation.y > 0.1 || bone.leg.rotation.y < -0.1) {
 					bone.goingforward = !bone.goingforward;
 				}
 			});
