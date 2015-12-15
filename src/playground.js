@@ -34,7 +34,7 @@ export default class Playground{
 
 		this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
 		this.controls.target.copy(this.camera.target);
-		this.controls.noPan = true;
+		this.controls.noPan = true; 
 		this.controls.rotateSpeed = 8.0;
 		this.controls.minDistance = 20;
 		this.controls.maxDistance = 400;
@@ -75,7 +75,7 @@ export default class Playground{
 
 		this.reference = new LoadModels();
 		this.reference.load().then(() => {
-			self.socket = io.connect("http://localhost:9200/");
+			self.socket = io.connect("http://95.85.6.49:81/");
 			self.initialize(name, animal);
 		});
 	}

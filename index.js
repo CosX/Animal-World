@@ -57,6 +57,7 @@ function onNewPlayer(data) {
                 x: newPlayer.x,
                 y: newPlayer.y,
                 z: newPlayer.z,
+                animaltype: newPlayer.animaltype,
                 name: newPlayer.name
             });
         }

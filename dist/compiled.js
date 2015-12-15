@@ -507,7 +507,7 @@ var Playground = (function () {
 
 		this.reference = new _loadmodels2.default();
 		this.reference.load().then(function () {
-			self.socket = io.connect("http://localhost:9200/");
+			self.socket = io.connect("http://95.85.6.49:81/");
 			self.initialize(name, animal);
 		});
 	}
