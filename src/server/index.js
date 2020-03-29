@@ -1,7 +1,7 @@
 var app = require('http').createServer();
 var io = require('socket.io')(app);
 var fs = require('fs');
-var Player = require('./server/player').Player;
+var Player = require('./player').Player;
 
 app.listen(9200);
 

@@ -1,3 +1,4 @@
+import * as THREE from "three";
 export default class BaseAnimal{
   constructor(id, startposition, name, scale, reference, scene){
 		this.id = id;
@@ -13,20 +14,21 @@ export default class BaseAnimal{
 		this.body = reference.clone();
 		this.bones = this.getBones();
 		this.name = name;
-    this.animaltype = "";
+    	this.animaltype = "";
 		this.options = {
 			size: 1.4,
 			height: 10,
 			curveSegments: 2,
-			font: "helvetiker",
 			bevelEnabled: false
 		};
-		var textShapes = THREE.FontUtils.generateShapes( this.name, this.options );
-		var text = new THREE.ShapeGeometry( textShapes );
-		this.textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: "#000000", side: THREE.DoubleSide } ) );
-		this.textMesh.position.z = -5;
-		this.textMesh.position.y = 3;
-		this.body.add( this.textMesh );
+		// var loader = new THREE.FontLoader();
+		// loader.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+		// var textShapes = new THREE.Font(this.options).generateShapes(this.name);
+		// var text = new THREE.ShapeGeometry( textShapes );
+		// this.textMesh = new THREE.Mesh( text, new THREE.MeshBasicMaterial( { color: "#000000", side: THREE.DoubleSide } ) );
+		// this.textMesh.position.z = -5;
+		// this.textMesh.position.y = 3;
+		//this.body.add( this.textMesh );
 		this.loadModel();
 	}
 
@@ -68,7 +70,7 @@ export default class BaseAnimal{
 	}
 
 	updateAnimation(){
-    throw new Error("Must be implemented by an animal.")
+    	throw new Error("Must be implemented by an animal.")
 	}
 
 	remove(){

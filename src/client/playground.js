@@ -1,3 +1,6 @@
+import * as THREE from "three";
+import TrackballControls from "three-trackballcontrols";
+import io from "socket.io-client";
 import Cow from "./cow.js";
 import Chicken from "./chicken.js";
 import World from "./world.js";
@@ -32,7 +35,7 @@ export default class Playground{
 		this.setskydome();
 		this.setrenderer();
 
-		this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+		this.controls = new TrackballControls(this.camera, this.renderer.domElement);
 		this.controls.target.copy(this.camera.target);
 		this.controls.noPan = true; 
 		this.controls.rotateSpeed = 8.0;
@@ -75,7 +78,7 @@ export default class Playground{
 
 		this.reference = new LoadModels();
 		this.reference.load().then(() => {
-			self.socket = io.connect("http://95.85.6.49:81/");
+			self.socket = io.connect("http://localhost:9200/");
 			self.initialize(name, animal);
 		});
 	}
@@ -309,7 +312,7 @@ export default class Playground{
 		if(animal.moving){
 			animal.updateMovement(this.world.mesh, this.scene);
 		}
-		animal.textMesh.lookAt(this.camera.position);
-		animal.textMesh.up.copy(this.camera.up);
+		// animal.textMesh.lookAt(this.camera.position);
+		// animal.textMesh.up.copy(this.camera.up);
 	}
 }

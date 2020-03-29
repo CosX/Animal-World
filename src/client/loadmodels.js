@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export default class LoadModels{
 	constructor(){
 		this.chicken = null;
@@ -10,11 +12,11 @@ export default class LoadModels{
 			self.loadWorld(self)
 				.then((mesh) => {
 					this.world = mesh;
-					return self.loadSkeletalModel("./reference/chicken1.json");
+					return self.loadSkeletalModel("./src/client/reference/chicken1.json");
 				})
 				.then((mesh) => {
 					self.chicken = mesh;
-					return self.loadSkeletalModel("./reference/cow.json");
+					return self.loadSkeletalModel("./src/client/reference/cow.json");
 				})
 				.then((mesh) => {
 					self.cow = mesh;
@@ -26,7 +28,7 @@ export default class LoadModels{
 	loadWorld(ctx){
 		return new Promise((fulfill, reject) =>{
 			let loader = new THREE.JSONLoader();
-			loader.load('./reference/World.json', ( geometry, materials ) => {
+			loader.load('./src/client/reference/world.json', ( geometry, materials ) => {
 				var mesh = new THREE.Mesh(
 					geometry,
 					new THREE.MeshFaceMaterial(materials)
