@@ -5,7 +5,7 @@
 
 Made in ES6, socket.io and Three.js!
 
-Check it out [here](http://codepen.io/CosX/pen/MaVorx)!
+Check it out [here](https://animal-world.karlsolgard.net/)!
 
 Run `npm install` and `gulp dev`.
 
